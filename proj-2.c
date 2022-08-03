@@ -125,8 +125,8 @@ int main()
     buffer = (int *)malloc(buffer_size * sizeof(int));
     full = malloc(sizeof(Semaphore));
     empty = malloc(sizeof(Semaphore));
-    initSem(full, 0);
-    initSem(empty, buffer_size);
+    initSem(empty, 0);
+    initSem(full, buffer_size);
     InitQueue(&RunQ);
     for (int i = 0; i < buffer_size; i++)
     {
