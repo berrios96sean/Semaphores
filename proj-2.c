@@ -45,11 +45,11 @@ void P(Semaphore *semaphore)
 
         if (tcb->thread_id < 0)
         {
-            printf("\n Consumer %d is waiting \n", tcb->thread_id);//
+            printf("\n Consumer %d is waiting", tcb->thread_id);//
         }
         else if (tcb->thread_id > 0)
         {
-            printf("\n Producer %d is waiting \n", tcb->thread_id);
+            printf("\n Producer %d is waiting", tcb->thread_id);
         }
         AddQueue(&(semaphore->sQueue), tcb);
         swapcontext(&(tcb->context), &(RunQ->context));
