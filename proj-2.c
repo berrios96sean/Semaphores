@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <unistd.h> 
-#include "threads.h"
+#include "sem.h"
 
 
 int buffer_size = 0;
@@ -19,55 +19,6 @@ int consumers = 0;
 int *buffer = 0;
 int in = 0;
 int out = 0;
-
-typedef struct Semaphore
-{
-    int value;
-    struct TCB_t *sQueue;
-} Semaphore;
-
-void initSem(Semaphore *semaphore, int value)
-{
-    semaphore->sQueue = NULL;
-    semaphore->value = value;
-}
-
-void P(Semaphore *semaphore)
-{
-    if (semaphore->value <= 0)
-    {
-        if (RunQ == NULL)
-        {
-            exit(0);
-        }
-
-        TCB_t *tcb = DelQueue(&RunQ);
-
-        if (tcb->thread_id < 0)
-        {
-            printf("\n Consumer %d is waiting\n", tcb->thread_id);//
-        }
-        else if (tcb->thread_id > 0)
-        {
-            printf("\n Producer %d is waiting\n", tcb->thread_id);
-        }
-        AddQueue(&(semaphore->sQueue), tcb);
-        swapcontext(&(tcb->context), &(RunQ->context));
-    }
-    else
-    {
-        semaphore->value--;
-    }
-}
-void V(Semaphore *semaphore)
-{
-    if (semaphore->sQueue != NULL)
-    {
-        TCB_t *tcb = DelQueue(&(semaphore->sQueue));
-        AddQueue(&RunQ, tcb);
-    }
-    semaphore->value++;
-}
 
 Semaphore *full;
 Semaphore *empty;
@@ -81,7 +32,7 @@ void producer(int id)
             P(empty);
         }
         printf("\n Producer %d is producing item number %d \n", RunQ->thread_id, i);
-        buffer[in] = RunQ->thread_id;  
+        buffer[in] = RunQ->thread_id;
         in = (in + 1) % buffer_size;
         V(full);
         if (i == iteration_limit && id == RunQ->thread_id)
@@ -125,8 +76,8 @@ int main()
     buffer = (int *)malloc(buffer_size * sizeof(int));
     full = malloc(sizeof(Semaphore));
     empty = malloc(sizeof(Semaphore));
-    initSem(empty, 0);
-    initSem(full, buffer_size);
+    initSem(full, 0);
+    initSem(empty, buffer_size);
     InitQueue(&RunQ);
     for (int i = 0; i < buffer_size; i++)
     {
