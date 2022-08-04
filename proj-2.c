@@ -49,7 +49,7 @@ void P(Semaphore *semaphore)
         }
         else if (tcb->thread_id > 0)
         {
-            printf("\n Producer %d is waiting \n", tcb->thread_id);
+            printf("\n Producer %d is waiting\n", tcb->thread_id);
         }
         AddQueue(&(semaphore->sQueue), tcb);
         swapcontext(&(tcb->context), &(RunQ->context));
@@ -80,7 +80,7 @@ void producer(int id)
         {
             P(empty);
         }
-        printf("Producer %d is producing item number %d", RunQ->thread_id, i);
+        printf("\n Producer %d is producing item number %d", RunQ->thread_id, i);
         buffer[in] = RunQ->thread_id;  
         in = (in + 1) % buffer_size;
         V(full);
